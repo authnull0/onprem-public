@@ -59,6 +59,34 @@ them have values.
 
 `TENANT_ID=1` is already set and should not be changed on a fresh install.
 
+> ### Hostname shape — the most common cause of a broken install
+>
+> `SYSTEM_URL` and `DOMAIN_URL` are not free-form. Every login resolves the
+> organisation's Postgres database from the **second dot-separated label** of
+> the hostname the browser used, and the tenant from the **first**:
+>
+>     default.example.com
+>     ^^^^^^^ ^^^^^^^
+>     tenant  organisation — must equal ORG_NAME
+>
+> Both URLs must therefore be DNS names of the form
+> `<name>.<ORG_NAME>.<tld>`, with at least three labels.
+>
+> | Value with `ORG_NAME=example` | Database it looks for |
+> |---|---|
+> | `https://onprem.example.com`  | `example` — correct |
+> | `https://example.org.com`     | `org` |
+> | `https://example.com`         | `com` |
+> | `http://203.0.113.10`         | `113` |
+> | `http://localhost:5173`       | none — the request panics the service |
+>
+> Only the first works. A bare IP address **cannot** be used, and neither can
+> a two-label domain — there is no org label to read. The failure appears at
+> login, not at startup, as `database "<label>" does not exist`.
+>
+> `DOMAIN_URL` is stored as the tenant's `site_url` and must match the browser's
+> host exactly, so give it as a bare hostname with no scheme, port or path.
+
 ### Email (required for user invitations and verification)
 
     SMTP_HOST=

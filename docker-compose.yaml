@@ -326,6 +326,7 @@ services:
 
      # Internal services
      AUTHNZ_URL: http://authnz:6066/authnz/authenticate
+     SYSTEM_URL: ${SYSTEM_URL}
      SSI_SERVICE: http://ssi-service:5000
      WALLET_SERVICE: http://wallet-service:6061
      LOGGING_URL: http://blockchain-ipfs-logging:6065/transaction-logging/transactions
@@ -354,6 +355,9 @@ services:
      REDIS_HOST: 0.0.0.0
      REDIS_PORT: ${REDIS_PORT}
      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+    volumes:
+      - ./ssi-config/config.toml:/app/config/config.toml:ro
 
     networks:
       - authnull-prod-net
@@ -472,6 +476,7 @@ services:
      VERIFY_URL: ${SYSTEM_URL}/api/v1/tenants/orgsignupverify
      FLUENT_LOG_PATH: /logs/auth.log
      CLIENT_URL: ${SYSTEM_URL}
+     DOMAIN_URL: ${DOMAIN_URL}
      CLOUDFLARE_ZONE_ID: ${CLOUDFLARE_ZONE_ID}
      CLOUDFLARE_AUTH_KEY: ${CLOUDFLARE_AUTH_KEY}
      CLOUDFLARE_AUTH_EMAIL: ${CLOUDFLARE_AUTH_EMAIL}
@@ -649,6 +654,7 @@ services:
 
     environment:
      SERVER_PORT: "8085"
+     ORG_NAME: ${ORG_NAME}
      WEBAUTHN_RP_NAME: "authnull.local"
      WEBAUTHN_RP_ID: "${SYSTEM_URL}"
      WEBAUTHN_ORIGIN: "${SYSTEM_URL}"
@@ -683,6 +689,7 @@ services:
   okta-login:
     image: docker-repo-public.authnull.com/okta-login:1.0.0
     restart: always
+    profiles: ["okta"]
     ports:
       - "6067:6067"
 
@@ -941,6 +948,7 @@ services:
   cassandra:
    image: cassandra:3.11
    container_name: cassandra
+   restart: unless-stopped
    ports:
     - "9042:9042"
 
