@@ -23,7 +23,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${DB_NAME}
       DB_SCHEMA: ${DB_SCHEMA}
-      DB_MASTER: ${DB_USER}
+      DB_MASTER: kloudone
 
       # Redis config
       REDIS_HOST: ${REDIS_HOST}
@@ -491,7 +491,7 @@ services:
      DB_PASSWORD: ${POSTGRES_PASSWORD}
      DB_NAME: ${DB_NAME}
      DB_SCHEMA: ${DB_SCHEMA}
-     MASTER_DB: ${DB_USER}
+     MASTER_DB: kloudone
 
      # Redis config
      REDIS_ADDR: ${REDIS_HOST}:${REDIS_PORT}
