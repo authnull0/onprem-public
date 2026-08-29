@@ -356,8 +356,11 @@ services:
      REDIS_PORT: ${REDIS_PORT}
      REDIS_PASSWORD: ${REDIS_PASSWORD}
 
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - 'sed "s|__REDIS_PASSWORD__|$${REDIS_PASSWORD}|g" /config-template/config.toml > /app/config/config.toml && exec ./main'
     volumes:
-      - ./ssi-config/config.toml:/app/config/config.toml:ro
+      - ./ssi-config/config.toml:/config-template/config.toml:ro
 
     networks:
       - authnull-prod-net

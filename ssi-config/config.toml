@@ -27,12 +27,12 @@ storage = "redis"
 
 [services.storage_option]
 address = "redis:6379"
-password = "redis123"
+password = "__REDIS_PASSWORD__"
 
 # per-service configuration
 [services.keystore]
 name = "keystore"
-password = "default-password"
+password = "__REDIS_PASSWORD__"
 
 [services.did]
 name = "did"
