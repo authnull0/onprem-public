@@ -713,6 +713,33 @@ services:
      # Internal service
      DO_AUTHNV4: "http://authn-service:2882/authnull0/api/v1/authn/v3/do-authenticationV4"
 
+    # okta-login reads its config from conf/app.yaml via viper; the image ships
+    # NO config file (it log.Fatal's without one, which is why it crash-looped).
+    # Generate app.yaml from the environment above at startup, then exec ./main.
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mkdir -p /app/conf
+        cat > /app/conf/app.yaml <<EOF
+        env: prod
+        prod:
+          server:
+            port: $${SERVER_PORT}
+          db:
+            host: $${DB_HOST}
+            port: $${DB_PORT}
+            user: $${DB_USER}
+            password: "$${DB_PASSWORD}"
+            name: $${DB_NAME}
+            schema: $${DB_SCHEMA}
+          url:
+            doAuthnV4: $${DO_AUTHNV4}
+            rootURLstr: $${ROOT_URL}
+            idpMetadataURLstr: $${IDP_METADATA_URL}
+          allowOrigin: "$${CORS_ALLOW_ORIGIN}"
+        EOF
+        exec ./main
+
     networks:
     - authnull-prod-net
 
