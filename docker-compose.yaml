@@ -692,7 +692,6 @@ services:
   okta-login:
     image: docker-repo-public.authnull.com/okta-login:2.0.0
     restart: always
-    profiles: ["okta"]
     ports:
       - "6067:6067"
 
