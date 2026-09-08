@@ -445,7 +445,7 @@ services:
   # SELF-SERVICE SERVICE
 
   self-service-console:
-    image: docker-repo-public.authnull.com/self-service:1.0.0
+    image: docker-repo-public.authnull.com/self-service:2.0.0
     restart: always
     ports:
      - "3000:3000"
