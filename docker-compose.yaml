@@ -906,8 +906,9 @@ services:
       - ./db-init:/db-init
     entrypoint: >
       bash -c "
-      echo 'Waiting for Postgres...' &&
-      sleep 5 &&
+      echo 'Waiting for Postgres to accept connections...' &&
+      until pg_isready -h postgres -U ${DB_USER} -d postgres >/dev/null 2>&1; do echo '...postgres still starting up, retrying in 2s'; sleep 2; done &&
+      sleep 2 &&
 
       echo '=== Step 1: Setting up kloudone database ===' &&
       psql -h postgres -U ${DB_USER} -d postgres -tc \"SELECT 1 FROM pg_database WHERE datname='kloudone'\" | grep -q 1 ||
