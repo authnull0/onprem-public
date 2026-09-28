@@ -335,7 +335,7 @@ services:
     - authnull-prod-net
 
   ssi-service:
-    image: docker-repo-public.authnull.com/ssi-service:1.0.0-onprem
+    image: docker-repo-public.authnull.com/ssi-service:onprem
     restart: always
 
     container_name: onprem-ssi-service-1
@@ -445,7 +445,7 @@ services:
   # SELF-SERVICE SERVICE
 
   self-service-console:
-    image: docker-repo-public.authnull.com/self-service:2.0.0
+    image: docker-repo-public.authnull.com/self-service:prod
     restart: always
     ports:
      - "3000:3000"
