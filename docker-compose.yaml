@@ -523,7 +523,7 @@ services:
 #     - ./nginx-app:/app/Nginx:rw
 
   wallet-service:
-    image: docker-repo-public.authnull.com/wallet-service:1.0.0-onprem
+    image: docker-repo-public.authnull.com/wallet-service:prod
     restart: always
     ports:
      - "6061:6061"
@@ -649,7 +649,7 @@ services:
       - authnull-prod-net
 
   mfa-service:
-    image: docker-repo-public.authnull.com/mfa-service:1.0.0-onprem
+    image: docker-repo-public.authnull.com/mfa-service:onprem
     restart: always
     ports:
      - "8085:8080"
