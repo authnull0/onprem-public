@@ -523,7 +523,7 @@ services:
 #     - ./nginx-app:/app/Nginx:rw
 
   wallet-service:
-    image: docker-repo-public.authnull.com/wallet-service:prod
+    image: docker-repo-public.authnull.com/wallet-service:onprem
     restart: always
     ports:
      - "6061:6061"
