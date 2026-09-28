@@ -823,7 +823,7 @@ services:
   # INFRA SERVICES
 
   minio:
-    image: quay.io/minio/minio:latest
+    image: bitnamilegacy/minio:latest
     restart: always
     command: >
      server /data --console-address ":9595"
