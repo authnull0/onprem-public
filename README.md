@@ -154,6 +154,12 @@ When settled, every service reads `running`, with two exceptions:
 `cassandra-init` and `did-schema-init` are one-shot setup jobs and correctly
 show `Exited (0)`.
 
+`did-schema-init` runs on every `up` but is idempotent (`schema-init/init.sh`):
+it imports `db-init/did.sql` only when the target database or schema does not
+exist yet, and stops without touching anything if a check fails. On an
+existing install its log reads `... - skipping`, so tenant data survives
+`docker compose down` / `up`.
+
 Then:
 
 - Admin console — port `5173`
@@ -226,8 +232,20 @@ start clean:
     docker compose up -d
 
 `down -v` removes every volume this deployment created, which destroys all
-data — Postgres, Cassandra, Redis and MinIO contents alike. Your `.env`,
-including the encryption keys, is untouched.
+data — Postgres, Cassandra, Redis and MinIO contents alike, including every
+onboarded tenant. Your `.env`, including the encryption keys, is untouched.
+Back up first (see below) and never use `-v` for routine restarts.
+
+**Docker network overlaps a host or VPN range.** The stack's network uses the
+fixed subnet `10.250.0.0/24` (`networks:` at the end of
+`docker-compose.yaml`). To change it, edit the subnet, then recreate the
+network with `docker compose down` followed by `docker compose up -d` —
+without `-v`; data volumes are kept.
+
+**Backing up Postgres.** The application user is not a superuser, so use
+`pg_dump` per database (`kloudone`, `${DB_NAME}` and each tenant database):
+
+    docker exec onprem-postgres-1 sh -c 'PGPASSWORD=$POSTGRESQL_PASSWORD pg_dump -h 127.0.0.1 -p $POSTGRESQL_PORT_NUMBER -U $POSTGRESQL_USERNAME -Fc -d kloudone' > kloudone.dump
 
 **Stopping and starting.**
 
