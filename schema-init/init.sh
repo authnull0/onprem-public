@@ -25,19 +25,12 @@ else
   q -d kloudone -1 -f /db-init/did.sql -f /db-init/index.sql
 fi
 
-# Step 1.5: tenant URL trigger (safe to re-run)
+# Step 1.5: remove the legacy tenant URL trigger. It rewrote site_url to
+# http://<SYSTEM_IP>/<org>, but login looks tenants up by DOMAIN_URL, so every
+# tenant created with it active failed with "Tenant not found or inactive".
 q -d kloudone <<SQL
-CREATE OR REPLACE FUNCTION fix_tenant_url() RETURNS TRIGGER AS \$fn\$
-BEGIN
-    NEW.site_url := 'http://${SYSTEM_IP}/' || split_part(NEW.site_url, '.', 2);
-    RETURN NEW;
-END;
-\$fn\$ LANGUAGE plpgsql;
-
 DROP TRIGGER IF EXISTS trigger_fix_tenant_url ON did.tenants;
-CREATE TRIGGER trigger_fix_tenant_url
-BEFORE INSERT ON did.tenants
-FOR EACH ROW EXECUTE FUNCTION fix_tenant_url();
+DROP FUNCTION IF EXISTS fix_tenant_url();
 SQL
 
 # Step 2: DID schema in $DB_NAME (did.sql only if did.organizations is missing)
