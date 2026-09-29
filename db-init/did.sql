@@ -1580,6 +1580,8 @@ CREATE TABLE did.mfa_methods (
 	CONSTRAINT mfa_methods_pkey PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS did.network_devices;
+
 CREATE TABLE did.network_devices (
 	id uuid DEFAULT gen_random_uuid() NOT NULL,
 	device_type varchar NOT NULL,
@@ -1858,30 +1860,6 @@ CREATE TABLE did.service_account_credential_mapping (
 	CONSTRAINT service_account_credential_mapping_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS did.service_account_credential_mapping;
-
-CREATE TABLE did.service_account_credential_mapping (
-	id serial4 NOT NULL,
-	source_endpoint_id int4 NOT NULL,
-	destination_endpoint_id int4 NOT NULL,
-	destination_epmuser_id int4 NOT NULL,
-	credential_id int4 NOT NULL,
-	user_source varchar(255) NOT NULL,
-	status varchar(50) NOT NULL,
-	user_id int4 NULL,
-	eth_address varchar NULL,
-	created_at varchar NULL,
-	updated_at varchar NULL,
-	created_hour varchar NULL,
-	eth_status varchar NULL,
-	org_id int4 NULL,
-	tenant_id int4 NULL,
-	issuer_id int4 NULL,
-	pr_submission varchar DEFAULT 'offline'::character varying NOT NULL,
-	user_type varchar NULL,
-	CONSTRAINT service_account_credential_mapping_pkey PRIMARY KEY (id)
-);
-
 DROP TABLE IF EXISTS did.service_account_delegations;
 
 CREATE TABLE did.service_account_delegations (
@@ -1925,6 +1903,8 @@ CREATE TABLE did.sid_histories (
 	user_id int4 NOT NULL,
 	CONSTRAINT sid_histories_pkey PRIMARY KEY (sid)
 );
+
+DROP TABLE IF EXISTS did.source_endpoint;
 
 CREATE TABLE did.source_endpoint (
 	id bigserial NOT NULL,
@@ -2374,6 +2354,8 @@ CREATE TABLE did.workload_identity_groups (
 	CONSTRAINT workload_identity_groups_pkey PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS did.ad_user_devices;
+
 CREATE TABLE did.ad_user_devices (
     id              SERIAL PRIMARY KEY,
     org_id          INTEGER NOT NULL,
@@ -2388,6 +2370,8 @@ CREATE TABLE did.ad_user_devices (
     last_used_at    TIMESTAMPTZ
 );
 
+DROP TABLE IF EXISTS did.ad_mfa_enrollments;
+
 CREATE TABLE did.ad_mfa_enrollments (
     id         SERIAL PRIMARY KEY,
     org_id     INTEGER NOT NULL,
@@ -2399,6 +2383,8 @@ CREATE TABLE did.ad_mfa_enrollments (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMPTZ NOT NULL
 );
+
+DROP TABLE IF EXISTS did.ad_mfa_challenges;
 
 CREATE TABLE did.ad_mfa_challenges (
     id                    SERIAL PRIMARY KEY,
@@ -2413,13 +2399,4 @@ CREATE TABLE did.ad_mfa_challenges (
     created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     expires_at            TIMESTAMPTZ NOT NULL,
     responded_at          TIMESTAMPTZ
-);
-
-CREATE TABLE did.ad_mfa_provider_config (
-    org_id     INTEGER NOT NULL,
-    provider   VARCHAR NOT NULL,
-    config     TEXT NOT NULL,   -- AES-GCM encrypted JSON
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (org_id)
 );

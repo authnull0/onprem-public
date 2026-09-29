@@ -9,15 +9,20 @@ echo 'Waiting for Postgres...'
 until pg_isready -h postgres -U "$DB_USER" -d postgres >/dev/null 2>&1; do sleep 2; done
 sleep 2
 
-# Step 1: kloudone database (did.sql only if the database does not exist)
+# Step 1: kloudone database (did.sql only if its DID schema is missing).
+# Checking a table rather than the database means a half-finished import is
+# retried on the next run; -1 makes the import all-or-nothing.
 kloudone_exists=$(q -d postgres -c "SELECT 1 FROM pg_database WHERE datname='kloudone'")
-if [ "$kloudone_exists" = "1" ]; then
-  echo 'kloudone exists - skipping schema import'
-else
+if [ "$kloudone_exists" != "1" ]; then
   echo 'Creating kloudone database...'
   q -d postgres -c 'CREATE DATABASE kloudone'
-  q -d kloudone -f /db-init/did.sql
-  q -d kloudone -f /db-init/index.sql
+fi
+kloudone_schema=$(q -d kloudone -c "SELECT 1 FROM information_schema.tables WHERE table_schema='did' AND table_name='organizations'")
+if [ "$kloudone_schema" = "1" ]; then
+  echo 'DID schema already present in kloudone - skipping'
+else
+  echo 'Applying DID schema to kloudone...'
+  q -d kloudone -1 -f /db-init/did.sql -f /db-init/index.sql
 fi
 
 # Step 1.5: tenant URL trigger (safe to re-run)
@@ -41,8 +46,7 @@ if [ "$schema_exists" = "1" ]; then
   echo "DID schema already present in $DB_NAME - skipping"
 else
   echo "Applying DID schema to $DB_NAME..."
-  q -d "$DB_NAME" -f /db-init/did.sql
-  q -d "$DB_NAME" -f /db-init/index.sql
+  q -d "$DB_NAME" -1 -f /db-init/did.sql -f /db-init/index.sql
 fi
 
 echo '=== All database initializations complete ==='
