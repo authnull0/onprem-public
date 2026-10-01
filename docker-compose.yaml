@@ -825,8 +825,8 @@ services:
   minio:
     image: bitnamilegacy/minio:latest
     restart: always
-    command: >
-     server /data --console-address ":9595"
+#    command: >
+#     server /data --console-address ":9595"
 
     ports:
      - "9000:9000"   # MinIO API
