@@ -572,7 +572,7 @@ services:
   # AUTHN SERVICES
 
   authn-service:
-    image: docker-repo-public.authnull.com/authn-service:1.0.0
+    image: docker-repo-public.authnull.com/authn-service:prod
     ports:
      - "2882:2882"
     restart: always
